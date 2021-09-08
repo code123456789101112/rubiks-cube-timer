@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Hello World</title>
+
+        <style>
+            body {
+                font-family: monospace;
+            }
+
+            h1 {
+                text-align: center;
+                font-size: 235%;
+            }
+
+            #timer {
+                text-align: center;
+                position: relative;
+                top: 165px;
+            }
+
+            .img {
+                text-align: end;
+                position: relative;
+                top: 200px;
+            }
+
+            #topimg,
+            #bottomimg {
+                position: relative;
+                right: 160px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1 id="scramble">Scramble</h1>
+        <div id="timer" style="font-size: 850%">00:00.00</div>
+
+        <div class="img" id="topimg"></div>
+        <div class="img"></div>
+        <div class="img" id="bottomimg"></div>
+
+        <script>
+            const ws = new WebSocket("ws://localhost:3030");
+
+            let timerInterval = false;
+
+            ws.onopen = () => {
+                console.log("connected");
+                ws.send(JSON.stringify("3x3x3 scramble"));
+
+                document.addEventListener("keydown", ({ key }) => {
+                    startOrStopTimer(key);
+                });
+            };
+
+            ws.onmessage = event => {
+                const message = event.data;
+
+                if (/^3x3x3-scramble/.test(message)) {
+                    const scramble = message.split(" ").slice(1).join(" ");
+                    document.getElementById("scramble").innerHTML = scramble;
+                } else if (/^scramble-image/.test(message)) {
+                    const elements = document.getElementsByClassName("img");
+                    for (const elem of elements) elem.innerHTML = "";
+
+                    const imgArray = JSON.parse(message.replace(/scramble-image /i, ""));
+
+                    for (let i = 0; i < imgArray.length; i++) {
+                        if (i === 0) elements[0].innerHTML += `<img src="${imgArray[i]}">`;
+                        else if (i > 0 && i < 5) elements[1].innerHTML += `<img src="${imgArray[i]}">`;
+                        else elements[2].innerHTML += `<img src="${imgArray[i]}">`;
+                    }
+                }
+            };
+
+            function startOrStopTimer(key) {
+                if (!timerInterval && key === " ") {
+                    const timerElement = document.getElementById("timer");
+                    timerElement.innerHTML = "00:00.00";
+
+                    timerInterval = setInterval(() => {
+                        const timer = timerElement.innerHTML.replace(/([:.])/g, m => `_${m}_`).split("_");
+                        const timerNums = timer.map(n => ([":", "."].includes(n) ? n : parseInt(n)));
+
+                        timerNums[4]++;
+
+                        if (timerNums[4] === 100) {
+                            timerNums[4] = 0;
+                            timerNums[2]++;
+                        }
+
+                        if (timerNums[2] === 60) {
+                            timerNums[2] = 0;
+                            timerNums[0]++;
+                        }
+
+                        const time = timerNums
+                            .map(n => ([":", "."].includes(n) ? n : `${n}`.length > 1 ? `${n}` : `0${n}`))
+                            .join("");
+
+                        timerElement.innerHTML = time;
+                    }, 10);
+                } else if (/[a-z ]/i.test(key) && timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = false;
+
+                    ws.send(JSON.stringify("3x3x3 scramble"));
+                }
+            }
+        </script>
+    </body>
+</html>
