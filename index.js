@@ -10,7 +10,7 @@ app.get("/", (_req, res) => {
     res.sendFile("index.html", { root: "." });
 });
 
-app.listen(3000, () => console.log("listening"));
+app.listen(process.env.PORT || 3000, () => console.log("listening"));
 
 const ws = new WebSocket.Server({ port: 3030 });
 
