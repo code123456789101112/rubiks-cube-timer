@@ -42,7 +42,7 @@
         <div class="img" id="bottomimg"></div>
 
         <script>
-            const ws = new WebSocket("ws://rubiks-cube-timer123.herokuapp.com:3030");
+            const ws = new WebSocket(window.location.origin.replace(/^http/, "ws"));
 
             let timerInterval = false;
 
