@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>Hello World</title>
+        <title>Rubik's Cube Timer</title>
 
         <style>
             body {
@@ -18,24 +18,25 @@
                 text-align: center;
                 position: relative;
                 top: 165px;
+                font-size: 850%;
             }
 
             .img {
                 text-align: end;
                 position: relative;
-                top: 200px;
+                top: 220px;
             }
 
             #topimg,
             #bottomimg {
                 position: relative;
-                right: 160px;
+                right: 132px;
             }
         </style>
     </head>
     <body>
         <h1 id="scramble">Scramble</h1>
-        <div id="timer" style="font-size: 850%">00:00.00</div>
+        <div id="timer">00:00.00</div>
 
         <div class="img" id="topimg"></div>
         <div class="img"></div>
@@ -68,9 +69,10 @@
                     const imgArray = JSON.parse(message.replace(/scramble-image /i, ""));
 
                     for (let i = 0; i < imgArray.length; i++) {
-                        if (i === 0) elements[0].innerHTML += `<img src="${imgArray[i]}">`;
-                        else if (i > 0 && i < 5) elements[1].innerHTML += `<img src="${imgArray[i]}">`;
-                        else elements[2].innerHTML += `<img src="${imgArray[i]}">`;
+                        if (i === 0) elements[0].innerHTML += `<img src="${imgArray[i]}" style="margin: -7px;">`;
+                        else if (i > 0 && i < 5) {
+                            elements[1].innerHTML += `<img src="${imgArray[i]}" style="margin: -7px;">`;
+                        } else elements[2].innerHTML += `<img src="${imgArray[i]}" style="margin: -7px;">`;
                     }
                 }
             };
