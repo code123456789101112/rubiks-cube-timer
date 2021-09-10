@@ -24,7 +24,7 @@
             .img {
                 text-align: end;
                 position: relative;
-                top: 220px;
+                top: 230px;
             }
 
             #topimg,
@@ -45,7 +45,8 @@
         <script>
             const ws = new WebSocket(window.location.origin.replace(/^http/, "ws"));
 
-            let timerInterval = false;
+            let intervals = {};
+            let plus2 = false;
 
             ws.onopen = () => {
                 console.log("connected");
@@ -78,11 +79,34 @@
             };
 
             function startOrStopTimer(key) {
-                if (!timerInterval && key === " ") {
+                if (key === " " && !intervals.timerInterval && !intervals.inspectionInterval) {
+                    const timerElement = document.getElementById("timer");
+                    timerElement.innerHTML = "0";
+
+                    intervals.inspectionInterval = setInterval(() => {
+                        if (timerElement.innerHTML === "14") plus2 = true;
+                        else if (timerElement.innerHTML === "16") {
+                            clearInterval(intervals.inspectionInterval);
+
+                            delete intervals.inspectionInterval;
+                            delete intervals.timerInterval;
+                            plus2 = false;
+
+                            timerElement.innerHTML = "DNF";
+
+                            return ws.send(JSON.stringify("3x3x3 scramble"));
+                        } else if (!intervals.inspectionInterval) return clearInterval(intervals.inspectionInterval);
+
+                        timerElement.innerHTML = parseInt(timerElement.innerHTML) + 1;
+                    }, 1000);
+                } else if (!intervals.timerInterval && intervals.inspectionInterval && key === " ") {
+                    clearInterval(intervals.inspectionInterval);
+                    delete intervals.inspectionInterval;
+
                     const timerElement = document.getElementById("timer");
                     timerElement.innerHTML = "00:00.00";
 
-                    timerInterval = setInterval(() => {
+                    intervals.timerInterval = setInterval(() => {
                         const timer = timerElement.innerHTML.replace(/([:.])/g, m => `_${m}_`).split("_");
                         const timerNums = timer.map(n => ([":", "."].includes(n) ? n : parseInt(n)));
 
@@ -104,11 +128,40 @@
 
                         timerElement.innerHTML = time;
                     }, 10);
-                } else if (/[a-z ]/i.test(key) && timerInterval) {
-                    clearInterval(timerInterval);
-                    timerInterval = false;
+                } else if (/[a-z ]/i.test(key) && intervals.timerInterval && !intervals.inspectionInterval) {
+                    clearInterval(intervals.timerInterval);
+                    clearInterval(intervals.inspectionInterval);
 
-                    ws.send(JSON.stringify("3x3x3 scramble"));
+                    if (plus2) {
+                        const timerElement = document.getElementById("timer");
+
+                        const timer = timerElement.innerHTML.replace(/([:.])/g, m => `_${m}_`).split("_");
+                        const timerNums = timer.map(n => ([":", "."].includes(n) ? n : parseInt(n)));
+
+                        timerNums[2] += 2;
+
+                        if (timerNums[4] === 100) {
+                            timerNums[4] = 0;
+                            timerNums[2]++;
+                        }
+
+                        if (timerNums[2] === 60) {
+                            timerNums[2] = 0;
+                            timerNums[0]++;
+                        }
+
+                        const time = timerNums
+                            .map(n => ([":", "."].includes(n) ? n : `${n}`.length > 1 ? `${n}` : `0${n}`))
+                            .join("");
+
+                        timerElement.innerHTML = `${time}+`;
+                    }
+
+                    delete intervals.timerInterval;
+                    intervals.inspectionInterval;
+                    plus2 = false;
+
+                    return ws.send(JSON.stringify("3x3x3 scramble"));
                 }
             }
         </script>
