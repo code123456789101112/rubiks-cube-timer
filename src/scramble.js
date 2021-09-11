@@ -27,17 +27,17 @@ function generateScramble(cube = "3x3x3") {
         baseMoves.push("Rw", "Uw", "Fw");
     }
 
-    if (cubeSize > 5) {
+    if (cubeSize >= 5) {
         nums.push(9, 10, 11);
         baseMoves.push("Lw", "Bw", "Dw");
     }
 
-    if (cubeSize > 6) {
+    if (cubeSize >= 6) {
         nums.push(12, 13, 14);
         baseMoves.push("3Rw", "3Uw", "3Fw");
     }
 
-    if (cubeSize > 7) {
+    if (cubeSize >= 7) {
         nums.push(15, 16, 17);
         baseMoves.push("3Lw", "3Bw", "3Dw");
     }
