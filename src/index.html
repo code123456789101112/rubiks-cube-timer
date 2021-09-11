@@ -44,6 +44,7 @@
             <select name="cubeselect" onchange="updateScramble()">
                 <option value="3x3x3">3x3x3</option>
                 <option value="2x2x2">2x2x2</option>
+                <option value="4x4x4">4x4x4</option>
             </select>
         </form>
 
@@ -74,7 +75,13 @@
 
                 if (/^scramble /.test(message)) {
                     const scramble = message.split(" ").slice(1).join(" ");
-                    document.getElementById("scramble").innerHTML = scramble;
+
+                    const scrambleElement = document.getElementById("scramble");
+                    scrambleElement.innerHTML = scramble;
+
+                    if (scrambleElement.innerHTML.replace(/\s+/g, "").length >= 45) {
+                        scrambleElement.setAttribute("style", "font-size: 165%;");
+                    } else scrambleElement.setAttribute("style", "font-size: 235%;");
                 } else if (/^scramble-image/.test(message)) {
                     const elements = document.getElementsByClassName("img");
                     for (const elem of elements) elem.innerHTML = "";
