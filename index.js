@@ -15,11 +15,12 @@ const ws = new WebSocket.Server({ server });
 
 ws.on("connection", client => {
     client.on("message", message => {
-        if (JSON.parse(message) === "3x3x3 scramble") {
-            const scramble = generateScramble();
+        if (/scramble$/.test(JSON.parse(message))) {
+            const cubeSize = JSON.parse(message).split(" ")[0];
+            const scramble = generateScramble(cubeSize);
 
-            client.send(`3x3x3-scramble ${scramble}`);
-            client.send(`scramble-image ${JSON.stringify(cube(scramble))}`);
+            client.send(`scramble ${scramble}`);
+            client.send(`scramble-image ${JSON.stringify(cube(scramble, cubeSize))}`);
         }
     });
 });

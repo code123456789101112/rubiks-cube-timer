@@ -1,7 +1,8 @@
-function cube(scramble) {
-    const baseURL = `http://cube.rider.biz/visualcube.php?fmt=svg&size=80&pzl=3&sch=wrgyob&alg=${encodeURIComponent(
-        scramble
-    )}`;
+function cube(scramble, cube = "3x3x3") {
+    const baseURL = `http://cube.rider.biz/visualcube.php?fmt=svg&size=80&pzl=${cube.slice(
+        0,
+        1
+    )}&sch=wrgyob&alg=${encodeURIComponent(scramble)}`;
 
     const imgArray = [];
 

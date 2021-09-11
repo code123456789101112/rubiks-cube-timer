@@ -9,6 +9,10 @@
                 font-family: monospace;
             }
 
+            #cubeform {
+                text-align: center;
+            }
+
             h1 {
                 text-align: center;
                 font-size: 235%;
@@ -24,7 +28,7 @@
             .img {
                 text-align: end;
                 position: relative;
-                top: 230px;
+                top: 210px;
             }
 
             #topimg,
@@ -35,6 +39,14 @@
         </style>
     </head>
     <body>
+        <form id="cubeform" action="javascript:void(0);">
+            <label for="cube">Scramble:</label>
+            <select name="cubeselect" onchange="updateScramble()">
+                <option value="3x3x3">3x3x3</option>
+                <option value="2x2x2">2x2x2</option>
+            </select>
+        </form>
+
         <h1 id="scramble">Scramble</h1>
         <div id="timer">00:00.00</div>
 
@@ -50,7 +62,7 @@
 
             ws.onopen = () => {
                 console.log("connected");
-                ws.send(JSON.stringify("3x3x3 scramble"));
+                updateScramble();
 
                 document.addEventListener("keydown", ({ key }) => {
                     startOrStopTimer(key);
@@ -60,7 +72,7 @@
             ws.onmessage = event => {
                 const message = event.data;
 
-                if (/^3x3x3-scramble/.test(message)) {
+                if (/^scramble /.test(message)) {
                     const scramble = message.split(" ").slice(1).join(" ");
                     document.getElementById("scramble").innerHTML = scramble;
                 } else if (/^scramble-image/.test(message)) {
@@ -78,6 +90,12 @@
                 }
             };
 
+            function updateScramble() {
+                const { value } = document.getElementById("cubeform").elements["cubeselect"];
+                console.log(value);
+                ws.send(JSON.stringify(`${value ?? "3x3x3"} scramble`));
+            }
+
             function startOrStopTimer(key) {
                 if (key === " " && !intervals.timerInterval && !intervals.inspectionInterval) {
                     const timerElement = document.getElementById("timer");
@@ -94,7 +112,7 @@
 
                             timerElement.innerHTML = "DNF";
 
-                            return ws.send(JSON.stringify("3x3x3 scramble"));
+                            return updateScramble();
                         } else if (!intervals.inspectionInterval) return clearInterval(intervals.inspectionInterval);
 
                         timerElement.innerHTML = parseInt(timerElement.innerHTML) + 1;
@@ -161,7 +179,7 @@
                     delete intervals.inspectionInterval;
                     plus2 = false;
 
-                    return ws.send(JSON.stringify("3x3x3 scramble"));
+                    return updateScramble();
                 }
             }
         </script>
