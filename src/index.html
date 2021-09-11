@@ -45,6 +45,9 @@
                 <option value="3x3x3">3x3x3</option>
                 <option value="2x2x2">2x2x2</option>
                 <option value="4x4x4">4x4x4</option>
+                <option value="5x5x5">5x5x5</option>
+                <option value="6x6x6">6x6x6</option>
+                <option value="7x7x7">7x7x7</option>
             </select>
         </form>
 
@@ -79,9 +82,21 @@
                     const scrambleElement = document.getElementById("scramble");
                     scrambleElement.innerHTML = scramble;
 
-                    if (scrambleElement.innerHTML.replace(/\s+/g, "").length >= 45) {
+                    if (scrambleElement.innerHTML.split(" ").length <= 20) {
+                        scrambleElement.setAttribute("style", "font-size: 235%;");
+                    }
+
+                    if (scrambleElement.innerHTML.split(" ").length >= 45) {
                         scrambleElement.setAttribute("style", "font-size: 165%;");
-                    } else scrambleElement.setAttribute("style", "font-size: 235%;");
+                    }
+
+                    if (scrambleElement.innerHTML.split(" ").length >= 80) {
+                        scrambleElement.setAttribute("style", "font-size: 145%;");
+                    }
+
+                    if (scrambleElement.innerHTML.split(" ").length >= 100) {
+                        scrambleElement.setAttribute("style", "font-size: 125%;");
+                    }
                 } else if (/^scramble-image/.test(message)) {
                     const elements = document.getElementsByClassName("img");
                     for (const elem of elements) elem.innerHTML = "";
