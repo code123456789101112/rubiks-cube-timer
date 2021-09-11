@@ -92,7 +92,6 @@
 
             function updateScramble() {
                 const { value } = document.getElementById("cubeform").elements["cubeselect"];
-                console.log(value);
                 ws.send(JSON.stringify(`${value ?? "3x3x3"} scramble`));
             }
 

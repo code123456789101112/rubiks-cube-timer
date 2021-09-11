@@ -7,7 +7,7 @@ const WebSocket = require("ws");
 const app = express();
 
 app.get("/", (_req, res) => {
-    res.sendFile("index.html", { root: "." });
+    res.sendFile("index.html", { root: "./src/" });
 });
 
 const server = app.listen(process.env.PORT || 3000, () => console.log("listening"));
