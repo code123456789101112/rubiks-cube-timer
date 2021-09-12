@@ -72,7 +72,6 @@
                 document.addEventListener("keydown", ({ key }) => {
                     if (key !== " ") return;
 
-                    console.log(pressed);
                     if (!pressed) pressed = Date.now();
                     document.getElementById("timer").setAttribute("style", "color: #00ff00;");
                 });
@@ -128,7 +127,6 @@
                 if (key === " ") document.getElementById("timer").removeAttribute("style");
 
                 if (key === " " && !intervals.timerInterval && !intervals.inspectionInterval) {
-                    console.log(Date.now(), pressed, Date.now() - pressed);
                     if (Date.now() - pressed < 400) return (pressed = false);
                     pressed = false;
 
