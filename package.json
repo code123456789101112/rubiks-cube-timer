@@ -1,19 +1,23 @@
 {
     "name": "timer",
     "version": "1.0.0",
-    "description": "",
+    "description": "http://rubiks-cube-timer123.herokuapp.com/",
     "main": "src/index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
-    "keywords": [],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/code123456789101112/rubiks-cube-timer.git"
+    },
     "author": "",
     "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/code123456789101112/rubiks-cube-timer/issues"
+    },
+    "homepage": "https://github.com/code123456789101112/rubiks-cube-timer#readme",
     "dependencies": {
         "express": "^4.17.1",
-        "ws": "^8.2.1"
-    },
-    "engines": {
-        "node": "16.9.0"
+        "ws": "^8.2.2"
     }
 }
