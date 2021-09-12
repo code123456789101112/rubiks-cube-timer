@@ -61,11 +61,23 @@
         <script>
             const ws = new WebSocket(window.location.origin.replace(/^http/, "ws"));
 
+            let intervals = {};
+            let plus2 = false;
+            let pressed = false;
+
             ws.onopen = () => {
                 console.log("connected");
                 updateScramble();
 
-                document.addEventListener("keydown", startOrStopTimer);
+                document.addEventListener("keydown", ({ key }) => {
+                    if (key !== " ") return;
+
+                    console.log(pressed);
+                    if (!pressed) pressed = Date.now();
+                    document.getElementById("timer").setAttribute("style", "color: #00ff00;");
+                });
+
+                document.addEventListener("keyup", startOrStopTimer);
             };
 
             ws.onmessage = event => {
@@ -107,16 +119,19 @@
                 }
             };
 
-            let intervals = {};
-            let plus2 = false;
-
             function updateScramble() {
                 const { value } = document.getElementById("cubeform").elements["cubeselect"];
                 ws.send(JSON.stringify(`${value ?? "3x3x3"} scramble`));
             }
 
             function startOrStopTimer({ key }) {
+                if (key === " ") document.getElementById("timer").removeAttribute("style");
+
                 if (key === " " && !intervals.timerInterval && !intervals.inspectionInterval) {
+                    console.log(Date.now(), pressed, Date.now() - pressed);
+                    if (Date.now() - pressed < 400) return (pressed = false);
+                    pressed = false;
+
                     const timerElement = document.getElementById("timer");
                     timerElement.innerHTML = "0";
 
@@ -137,6 +152,9 @@
                         timerElement.innerHTML = parseInt(timerElement.innerHTML) + 1;
                     }, 1000);
                 } else if (!intervals.timerInterval && intervals.inspectionInterval && key === " ") {
+                    if (Date.now() - pressed < 400) return (pressed = false);
+                    pressed = false;
+
                     clearInterval(intervals.inspectionInterval);
                     delete intervals.inspectionInterval;
 
@@ -197,6 +215,7 @@
                     delete intervals.timerInterval;
                     delete intervals.inspectionInterval;
                     plus2 = false;
+                    pressed = false;
 
                     return updateScramble();
                 }
